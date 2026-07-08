@@ -1,0 +1,366 @@
+/* ───────────────────────────────────────────────────────────────
+   Film Institution — Registration Hub
+   Elegant, bright, minimalist theme
+   Font: Plus Jakarta Sans
+   ─────────────────────────────────────────────────────────────── */
+
+/* ── Reset & Variables ──────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* palette */
+  --white: #ffffff;
+  --bg-primary: #fafafa;
+  --bg-secondary: #f5f5f6;
+  --border: #eeeeef;
+  --border-active: #c0c0c4;
+  --text-primary: #1a1a1e;
+  --text-secondary: #6e6e78;
+  --text-muted: #a0a0a8;
+  --accent: #3d3d45;
+  --accent-soft: #eaeaec;
+  --success-bg: #edf9f0;
+  --success-text: #1a7a3a;
+  --success-border: #b6e2c4;
+  --error-bg: #fef1f1;
+  --error-text: #b13a3a;
+  --error-border: #f0c0c0;
+
+  /* gradients for cards */
+  --gradient-warm: linear-gradient(135deg, #fbe8d3 0%, #f0d4b8 40%, #e8c4a0 100%);
+  --gradient-cool: linear-gradient(135deg, #d4e4f7 0%, #bdd4ed 40%, #a8c4e0 100%);
+  --gradient-muted: linear-gradient(135deg, #e2daf0 0%, #d2c8e4 40%, #c2b8d8 100%);
+
+  /* spacing */
+  --radius: 12px;
+  --radius-sm: 8px;
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── Split Layout ───────────────────────────────────────────── */
+.split-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+
+/* ── Left Column — Catalog ──────────────────────────────────── */
+.catalog {
+  padding: 56px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 40px;
+  border-right: 1px solid var(--border);
+  background: var(--white);
+}
+
+.catalog__header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.catalog__badge {
+  display: inline-block;
+  width: fit-content;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  padding: 4px 12px;
+  border-radius: 100px;
+}
+
+.catalog__header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+}
+
+.catalog__header p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.catalog__cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Course Card ────────────────────────────────────────────── */
+.course-card {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+  background: var(--white);
+  outline: none;
+}
+
+.course-card:hover {
+  transform: scale(1.02);
+  border-color: var(--border-active);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.course-card:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.course-card.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent), 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* gradient thumbnails */
+.course-card__gradient {
+  width: 100px;
+  min-height: 120px;
+}
+
+.course-card__gradient--warm  { background: var(--gradient-warm); }
+.course-card__gradient--cool  { background: var(--gradient-cool); }
+.course-card__gradient--muted { background: var(--gradient-muted); }
+
+.course-card__body {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.course-card__number {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+}
+
+.course-card__title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.course-card__desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin-top: 2px;
+}
+
+.course-card__tag {
+  margin-top: 8px;
+  display: inline-block;
+  width: fit-content;
+  font-size: 0.68rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+
+.catalog__footnote {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  letter-spacing: 0.2px;
+}
+
+/* ── Right Column — Registration ────────────────────────────── */
+.registration {
+  padding: 56px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+}
+
+.registration__inner {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.registration__header h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.registration__header p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* ── Form ───────────────────────────────────────────────────── */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.form__group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form__label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-secondary);
+}
+
+.form__input {
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.form__input::placeholder {
+  color: var(--text-muted);
+}
+
+.form__input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.form__select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236e6e78' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+.form__button {
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--white);
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 14px 24px;
+  cursor: pointer;
+  transition: opacity var(--transition), transform var(--transition);
+  margin-top: 4px;
+}
+
+.form__button:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.form__button:active {
+  transform: translateY(0);
+}
+
+.form__button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Status Messages ────────────────────────────────────────── */
+.form__status {
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+  overflow: hidden;
+  max-height: 0;
+}
+
+.form__status.visible {
+  padding: 12px 16px;
+  max-height: 80px;
+  margin-top: 2px;
+}
+
+.form__status--success {
+  color: var(--success-text);
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+}
+
+.form__status--error {
+  color: var(--error-text);
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .split-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .catalog {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 40px 24px;
+  }
+
+  .registration {
+    padding: 40px 24px;
+  }
+
+  .course-card {
+    grid-template-columns: 72px 1fr;
+  }
+
+  .course-card__gradient {
+    width: 72px;
+    min-height: 100px;
+  }
+}

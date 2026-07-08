@@ -1,0 +1,70 @@
+# Implementation Plan - Film Institution Registration Hub
+
+Create a minimalist, light-themed student registration hub for a Film Institution using Node.js, Express, and vanilla HTML/CSS/JS.
+
+## Proposed Changes
+
+### Backend Setup
+
+#### [NEW] [package.json](file:///c:/Users/ELANGO%20N%20D/OneDrive/Desktop/SUMMER/FIlm%20Institute%20Registration/package.json)
+Initialize a Node.js project containing standard metadata and dependencies:
+- `express` for the HTTP server.
+- `nodemon` as a development dependency for automatic server restarts (optional, but convenient).
+- `start` script executing `node server.js`.
+
+#### [NEW] [server.js](file:///c:/Users/ELANGO%20N%20D/OneDrive/Desktop/SUMMER/FIlm%20Institute%20Registration/server.js)
+Setup Node/Express backend:
+- Run on Port `3000`.
+- Use `express.json()` middleware to parse JSON payloads.
+- Serve static files from the `public/` directory using `express.static('public')`.
+- Implement `POST /api/register` to:
+  - Check validation (Full Name, Email, Phone, and Course).
+  - Return `400 Bad Request` if any validation fails.
+  - Append valid registrations to `students.json`.
+  - Log successful submissions to the console.
+  - Return success status.
+
+### Frontend Setup
+
+#### [NEW] [public/index.html](file:///c:/Users/ELANGO%20N%20D/OneDrive/Desktop/SUMMER/FIlm%20Institute%20Registration/public/index.html)
+A split-screen viewport layout using Google Font `Plus Jakarta Sans`:
+- **Left Column**: Course catalog containing 3 cards:
+  - "Direction & Screenwriting"
+  - "Cinematography"
+  - "Post-Production & Editing"
+  - Each card will have a subtle gradient placeholder representing the aesthetic visual style.
+- **Right Column**: A fixed form section:
+  - Inputs: Full Name (`text`), Email (`email`), Phone (`tel`), Selected Program (`select` dropdown).
+  - Status container for success/error messages.
+- Links to `style.css` and `script.js`.
+
+#### [NEW] [public/style.css](file:///c:/Users/ELANGO%20N%20D/OneDrive/Desktop/SUMMER/FIlm%20Institute%20Registration/public/style.css)
+Elegant, bright UI using modern CSS practices:
+- Set up CSS custom variables for consistent spacing, colors (`#eeeeef` thin borders, soft gradients, slate text colors).
+- Use `Plus Jakarta Sans` as the primary typography.
+- Split-screen layout using CSS Grid or Flexbox (`1vh` viewport heights).
+- Implement interactive scale transitions (`transform: scale(1.02)`) on course card hovers.
+- Add active card highlighting with a distinctive thin border and subtle shadow when a course card is selected.
+- Create input field focus states with smooth transitions.
+
+#### [NEW] [public/script.js](file:///c:/Users/ELANGO%20N%20D/OneDrive/Desktop/SUMMER/FIlm%20Institute%20Registration/public/script.js)
+Interactions and network calls:
+- Attach event listeners to course cards to add a `.selected` class and synchronize the dropdown selection.
+- Intercept registration form submit action.
+- Fetch API call to `/api/register` with JSON body payload.
+- Handle responses and update the DOM status container with appropriate feedback/error styling.
+
+---
+
+## Verification Plan
+
+### Automated/Manual Verification
+- Install dependencies: `npm install`.
+- Start the server: `node server.js` or `npm start`.
+- Access the web interface at `http://localhost:3000`.
+- Verify features:
+  1. Clicking a course card highlights it and updates the dropdown.
+  2. Submitting the registration form sends data to `/api/register`.
+  3. The backend logs the successful registration and writes it to `students.json`.
+  4. The frontend displays a success alert/message.
+  5. Submitting empty or malformed fields triggers validation error displays.

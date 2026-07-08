@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Register for professional film-making courses at our Film Institution — Direction, Cinematography, and Post-Production programs." />
+  <title>Film Institution — Student Registration</title>
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ─── Main Split Layout ─────────────────────────────────── -->
+  <div class="split-layout">
+
+    <!-- ─── Left Column: Course Catalog ──────────────────────── -->
+    <section class="catalog" aria-label="Course catalog">
+      <header class="catalog__header">
+        <span class="catalog__badge">2026 Intake</span>
+        <h1>Our Programs</h1>
+        <p>Select a program to begin your registration.</p>
+      </header>
+
+      <div class="catalog__cards">
+        <!-- Card 1 -->
+        <article class="course-card" data-course="Direction & Screenwriting" tabindex="0">
+          <div class="course-card__gradient course-card__gradient--warm"></div>
+          <div class="course-card__body">
+            <span class="course-card__number">01</span>
+            <h2 class="course-card__title">Direction &amp; Screenwriting</h2>
+            <p class="course-card__desc">Master visual storytelling, script structure, and the art of directing actors and scenes.</p>
+            <span class="course-card__tag">12-month program</span>
+          </div>
+        </article>
+
+        <!-- Card 2 -->
+        <article class="course-card" data-course="Cinematography" tabindex="0">
+          <div class="course-card__gradient course-card__gradient--cool"></div>
+          <div class="course-card__body">
+            <span class="course-card__number">02</span>
+            <h2 class="course-card__title">Cinematography</h2>
+            <p class="course-card__desc">Explore camera systems, lighting design, and the language of visual composition.</p>
+            <span class="course-card__tag">10-month program</span>
+          </div>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="course-card" data-course="Post-Production & Editing" tabindex="0">
+          <div class="course-card__gradient course-card__gradient--muted"></div>
+          <div class="course-card__body">
+            <span class="course-card__number">03</span>
+            <h2 class="course-card__title">Post-Production &amp; Editing</h2>
+            <p class="course-card__desc">Learn non-linear editing, color grading, sound design, and visual effects workflows.</p>
+            <span class="course-card__tag">9-month program</span>
+          </div>
+        </article>
+      </div>
+
+      <p class="catalog__footnote">✦ All programs include mentorship and industry placement.</p>
+    </section>
+
+    <!-- ─── Right Column: Registration Form ──────────────────── -->
+    <section class="registration" aria-label="Registration form">
+      <div class="registration__inner">
+        <header class="registration__header">
+          <h2>Register</h2>
+          <p>Fill in your details to apply for a program.</p>
+        </header>
+
+        <form id="registrationForm" class="form" autocomplete="off" novalidate>
+          <!-- Full Name -->
+          <div class="form__group">
+            <label for="fullName" class="form__label">Full Name</label>
+            <input type="text" id="fullName" name="name" class="form__input" placeholder="e.g. Adira Menon" required />
+          </div>
+
+          <!-- Email -->
+          <div class="form__group">
+            <label for="email" class="form__label">Email Address</label>
+            <input type="email" id="email" name="email" class="form__input" placeholder="you@example.com" required />
+          </div>
+
+          <!-- Phone -->
+          <div class="form__group">
+            <label for="phone" class="form__label">Phone Number</label>
+            <input type="tel" id="phone" name="phone" class="form__input" placeholder="+91 98765 43210" required />
+          </div>
+
+          <!-- Program Dropdown -->
+          <div class="form__group">
+            <label for="course" class="form__label">Selected Program</label>
+            <select id="course" name="course" class="form__input form__select" required>
+              <option value="" disabled selected>Choose a program…</option>
+              <option value="Direction & Screenwriting">Direction &amp; Screenwriting</option>
+              <option value="Cinematography">Cinematography</option>
+              <option value="Post-Production & Editing">Post-Production &amp; Editing</option>
+            </select>
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" id="submitBtn" class="form__button">Submit Application</button>
+
+          <!-- Status Message -->
+          <div id="formStatus" class="form__status" role="alert" aria-live="polite"></div>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
