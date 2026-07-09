@@ -245,15 +245,43 @@ body {
   box-shadow: 0 0 0 2px var(--accent), 0 4px 24px rgba(0, 0, 0, 0.06);
 }
 
-/* gradient thumbnails */
-.course-card__gradient {
+/* Thumbnail styling with image and overlays */
+.course-card__thumbnail {
+  position: relative;
   width: 100px;
   min-height: 120px;
+  overflow: hidden;
 }
 
-.course-card__gradient--warm  { background: var(--gradient-warm); }
-.course-card__gradient--cool  { background: var(--gradient-cool); }
-.course-card__gradient--muted { background: var(--gradient-muted); }
+.course-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--transition);
+}
+
+.course-card:hover .course-card__img {
+  transform: scale(1.1);
+}
+
+/* Subtle dark gradient overlay to give context and cinematic style */
+.course-card__thumbnail::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to right,
+    rgba(26, 26, 30, 0.25) 0%,
+    rgba(26, 26, 30, 0.05) 50%,
+    rgba(26, 26, 30, 0) 100%
+  );
+  pointer-events: none;
+}
+
 
 .course-card__body {
   padding: 20px 24px;
@@ -462,7 +490,7 @@ body {
     grid-template-columns: 72px 1fr;
   }
 
-  .course-card__gradient {
+  .course-card__thumbnail {
     width: 72px;
     min-height: 100px;
   }
