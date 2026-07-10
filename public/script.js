@@ -6,6 +6,15 @@
 (function () {
   'use strict';
 
+  // ── Navbar Scroll Effect ───────────────────────────────────
+  const nav = document.getElementById('mainNav');
+  if (nav) {
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 20);
+    });
+  }
+
+
   // ── DOM References ──────────────────────────────────────────
   const cards      = document.querySelectorAll('.course-card');
   const dropdown   = document.getElementById('course');

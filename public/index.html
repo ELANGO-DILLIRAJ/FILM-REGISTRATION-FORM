@@ -14,7 +14,22 @@
   <link rel="icon" type="image/svg+xml" href="logo.svg" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body class="has-navbar">
+
+  <!-- ─── Top Navbar ────────────────────────────────────────── -->
+  <nav class="navbar" id="mainNav">
+    <div class="navbar__inner">
+      <a href="index.html" class="navbar__brand">
+        <img src="logo.svg" alt="RKFI Logo" class="navbar__logo" />
+        <span class="navbar__title"><strong>RKFI</strong></span>
+      </a>
+      <ul class="navbar__links">
+        <li><a href="index.html" class="navbar__link navbar__link--active">Home</a></li>
+        <li><a href="about.html" class="navbar__link">About</a></li>
+        <li><a href="#registrationForm" class="navbar__link navbar__link--cta">Register</a></li>
+      </ul>
+    </div>
+  </nav>
 
   <!-- ─── Main Split Layout ─────────────────────────────────── -->
   <div class="split-layout">

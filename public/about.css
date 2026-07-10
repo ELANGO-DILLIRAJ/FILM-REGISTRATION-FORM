@@ -1,0 +1,505 @@
+/* ───────────────────────────────────────────────────────────────
+   About Page — RKFI About & History Styles
+   ─────────────────────────────────────────────────────────────── */
+
+/* ── Hero Section ──────────────────────────────────────────── */
+.about-hero {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.about-hero__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  filter: brightness(0.55) saturate(1.1);
+  transition: transform 8s ease-out;
+}
+
+.about-hero:hover .about-hero__img {
+  transform: scale(1.04);
+}
+
+.about-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10, 10, 14, 0.92) 0%,
+    rgba(10, 10, 14, 0.5) 50%,
+    rgba(10, 10, 14, 0.15) 100%
+  );
+  z-index: 1;
+}
+
+.about-hero__content {
+  position: relative;
+  z-index: 2;
+  padding: 48px 56px;
+  max-width: 800px;
+  animation: heroFadeIn 1.2s ease-out;
+}
+
+@keyframes heroFadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.about-hero__badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  color: #d1a13b;
+  background: rgba(209, 161, 59, 0.12);
+  border: 1px solid rgba(209, 161, 59, 0.3);
+  padding: 5px 16px;
+  border-radius: 100px;
+  margin-bottom: 16px;
+}
+
+.about-hero__title {
+  font-family: 'Cinzel', serif;
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  margin-bottom: 12px;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+}
+
+.about-hero__subtitle {
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  max-width: 520px;
+}
+
+/* ── Main About Content ────────────────────────────────────── */
+.about-main {
+  background: var(--bg-primary);
+}
+
+.about-section {
+  padding: 72px 0;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.about-section.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.about-section--alt {
+  background: var(--white);
+}
+
+.about-section__container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+/* ── Section Header ────────────────────────────────────────── */
+.section-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #b88728;
+  background: rgba(184, 135, 40, 0.08);
+  border: 1px solid rgba(184, 135, 40, 0.2);
+  padding: 4px 14px;
+  border-radius: 100px;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+}
+
+.section-desc {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  max-width: 640px;
+  margin-bottom: 36px;
+}
+
+/* ── About Text ────────────────────────────────────────────── */
+.about-text {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 40px;
+}
+
+.about-text p {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  line-height: 1.75;
+}
+
+.about-text strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.about-text em {
+  color: #b88728;
+  font-style: italic;
+}
+
+/* ── Facts Grid ────────────────────────────────────────────── */
+.facts-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.fact-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.fact-card.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fact-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+  border-color: rgba(184, 135, 40, 0.3);
+}
+
+.fact-card__icon {
+  font-size: 1.6rem;
+}
+
+.fact-card__number {
+  font-family: 'Cinzel', serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.fact-card__label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.3px;
+}
+
+/* ── Decade Tabs ───────────────────────────────────────────── */
+.decade-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.decade-tab {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 9px 22px;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  letter-spacing: 0.3px;
+}
+
+.decade-tab:hover {
+  border-color: var(--border-active);
+  color: var(--text-primary);
+  background: var(--accent-soft);
+}
+
+.decade-tab--active {
+  background: var(--accent);
+  color: var(--white);
+  border-color: var(--accent);
+}
+
+.decade-tab--active:hover {
+  background: #2d2d34;
+  color: var(--white);
+  border-color: #2d2d34;
+}
+
+/* ── Film Table ────────────────────────────────────────────── */
+.film-tables-wrapper {
+  position: relative;
+}
+
+.film-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  display: none;
+  animation: tableSlideIn 0.4s ease-out;
+}
+
+@keyframes tableSlideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.film-table--visible {
+  display: table;
+}
+
+.film-table thead th {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  padding: 14px 20px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.film-table thead th:first-child {
+  border-radius: var(--radius-sm) 0 0 0;
+}
+
+.film-table thead th:last-child {
+  border-radius: 0 var(--radius-sm) 0 0;
+}
+
+.film-table tbody td {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s ease;
+}
+
+.film-table tbody tr:hover td {
+  background: rgba(184, 135, 40, 0.04);
+}
+
+.film-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.film-table tbody td:first-child {
+  font-weight: 600;
+  color: #b88728;
+  font-variant-numeric: tabular-nums;
+  width: 80px;
+}
+
+.film-table tbody td:nth-child(2) {
+  font-weight: 500;
+}
+
+/* ── Awards Grid ───────────────────────────────────────────── */
+.awards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.award-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.award-card.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.award-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+  border-color: rgba(184, 135, 40, 0.25);
+}
+
+.award-card__icon {
+  font-size: 2rem;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.award-card__title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+  letter-spacing: -0.2px;
+}
+
+.award-card__desc {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+.award-card__desc strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.award-card__desc em {
+  color: #b88728;
+  font-style: italic;
+}
+
+/* ── Footer ────────────────────────────────────────────────── */
+.about-footer {
+  background: #1a1a1e;
+  padding: 40px 0;
+}
+
+.about-footer__inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.about-footer__brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.about-footer__logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+}
+
+.about-footer__name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.5px;
+}
+
+.about-footer__copy {
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* ── Responsive: About Page ────────────────────────────────── */
+@media (max-width: 900px) {
+  .about-hero {
+    height: 320px;
+  }
+
+  .about-hero__content {
+    padding: 32px 24px;
+  }
+
+  .about-hero__title {
+    font-size: 1.8rem;
+  }
+
+  .about-section {
+    padding: 48px 0;
+  }
+
+  .about-section__container {
+    padding: 0 24px;
+  }
+
+  .facts-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .awards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-footer__inner {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .about-hero {
+    height: 260px;
+  }
+
+  .about-hero__title {
+    font-size: 1.45rem;
+  }
+
+  .facts-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .decade-tabs {
+    gap: 6px;
+  }
+
+  .decade-tab {
+    padding: 7px 16px;
+    font-size: 0.76rem;
+  }
+
+  .film-table thead th,
+  .film-table tbody td {
+    padding: 10px 12px;
+    font-size: 0.82rem;
+  }
+
+  .navbar__inner {
+    padding: 0 16px;
+  }
+}

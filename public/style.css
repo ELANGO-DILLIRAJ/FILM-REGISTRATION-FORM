@@ -4,6 +4,120 @@
    Font: Plus Jakarta Sans
    ─────────────────────────────────────────────────────────────── */
 
+/* ── Navbar ────────────────────────────────────────────────── */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--border);
+  height: 64px;
+  transition: box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.navbar.scrolled {
+  box-shadow: 0 2px 24px rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.navbar__inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+}
+
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: opacity 0.2s ease;
+}
+
+.navbar__brand:hover {
+  opacity: 0.85;
+}
+
+.navbar__logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar__title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.35rem;
+  letter-spacing: 2px;
+  color: var(--text-primary);
+}
+
+.navbar__title strong {
+  font-weight: 900;
+  background: linear-gradient(135deg, #1a1a1e 0%, #b88728 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.navbar__links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+}
+
+.navbar__link {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 8px 18px;
+  border-radius: 100px;
+  transition: color 0.2s ease, background 0.2s ease;
+  position: relative;
+}
+
+.navbar__link:hover {
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+}
+
+.navbar__link--active {
+  color: var(--text-primary);
+  font-weight: 600;
+  background: var(--accent-soft);
+}
+
+.navbar__link--cta {
+  background: var(--accent);
+  color: var(--white) !important;
+  font-weight: 600;
+  padding: 8px 22px;
+}
+
+.navbar__link--cta:hover {
+  background: #2d2d34;
+  color: var(--white) !important;
+}
+
+/* Push page content below the fixed navbar */
+body.has-navbar {
+  padding-top: 64px;
+}
+
+
 /* ── Reset & Variables ──────────────────────────────────────── */
 *,
 *::before,
