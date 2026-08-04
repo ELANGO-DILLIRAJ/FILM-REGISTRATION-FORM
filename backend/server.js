@@ -15,25 +15,45 @@ const USERS_FILE = path.join(__dirname, 'users.json');
 // Maps token → userId
 const tokenSessions = new Map();
 
-// ── Session & Middleware Config ──────────────────────────────
-app.set('trust proxy', 1);
+// ── CORS & Preflight Configuration ───────────────────────────
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5000',
+  'https://rkfi-film-registration.netlify.app'
+];
 
-app.use(cors({
-  origin: ['http://localhost:3000', 'https://rkfi-film-registration.netlify.app'],
-  credentials: true
-}));
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
+// ── Reverse Proxy & Session Config ───────────────────────────
+app.set('trust proxy', 1);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'rkfi-secret-key-2026',
+  secret: 'rkfi-cinema-secret',
   resave: false,
   saveUninitialized: false,
+  proxy: true,
   cookie: {
     sameSite: 'none',
     secure: true,
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    maxAge: 3600000
   }
 }));
 
