@@ -167,7 +167,7 @@
 })();
 
 // ── Official Google Sign-In Callback ──────────────────────────
-window.handleCredentialResponse = async (response) => {
+async function processGoogleCredential(response) {
   try {
     const res = await fetch('/api/auth/google', {
       method: 'POST',
@@ -190,4 +190,7 @@ window.handleCredentialResponse = async (response) => {
   } catch (err) {
     alert('Network error during Google Sign-In.');
   }
-};
+}
+
+window.handleGoogleCredential = processGoogleCredential;
+window.handleCredentialResponse = processGoogleCredential;

@@ -2,23 +2,35 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
+const session = require('express-session');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, 'students.json');
 const USERS_FILE = path.join(__dirname, 'users.json');
 
-// ── In-memory session store ──────────────────────────────────
-// Maps token → userId
+// ── In-memory session fallback store ─────────────────────────
 const sessions = new Map();
 
 // ── Middleware ────────────────────────────────────────────────
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'rkfi-film-institute-session-secret-key-2026',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false, // Set to true if running behind HTTPS proxy like Render
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
 
 // ── Helpers ──────────────────────────────────────────────────
 
-/** Read existing student records (or return an empty array). */
+/** Read existing student records. */
 function readStudents() {
   try {
     if (fs.existsSync(DATA_FILE)) {
@@ -36,7 +48,7 @@ function writeStudents(students) {
   fs.writeFileSync(DATA_FILE, JSON.stringify(students, null, 2), 'utf-8');
 }
 
-/** Read user accounts (or return an empty array). */
+/** Read user accounts. */
 function readUsers() {
   try {
     if (fs.existsSync(USERS_FILE)) {
@@ -54,51 +66,53 @@ function writeUsers(users) {
   fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2), 'utf-8');
 }
 
-/** Hash a password with a salt using scrypt. */
-function hashPassword(password, salt) {
-  return crypto.scryptSync(password, salt, 64).toString('hex');
-}
-
 /** Generate a random session token. */
 function generateToken() {
   return crypto.randomBytes(32).toString('hex');
 }
 
-/** Create a session for a user and return the token. */
+/** Create a token session for a user. */
 function createSession(userId) {
   const token = generateToken();
   sessions.set(token, userId);
   return token;
 }
 
-/** Auth middleware — extracts user from Authorization header. */
+/** Auth middleware — extracts user from Express session or Authorization header. */
 function authenticate(req, res, next) {
+  // 1. Check Express session
+  if (req.session && req.session.user) {
+    const users = readUsers();
+    const user = users.find(u => u.id === req.session.user.id);
+    if (user) {
+      req.user = user;
+      return next();
+    }
+  }
+
+  // 2. Check Authorization header
   const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ success: false, message: 'Authentication required.' });
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.slice(7);
+    const userId = sessions.get(token);
+    if (userId) {
+      const users = readUsers();
+      const user = users.find(u => u.id === userId);
+      if (user) {
+        req.user = user;
+        req.token = token;
+        return next();
+      }
+    }
   }
 
-  const token = authHeader.slice(7);
-  const userId = sessions.get(token);
-  if (!userId) {
-    return res.status(401).json({ success: false, message: 'Invalid or expired session.' });
-  }
-
-  const users = readUsers();
-  const user = users.find(u => u.id === userId);
-  if (!user) {
-    return res.status(401).json({ success: false, message: 'User not found.' });
-  }
-
-  req.user = user;
-  req.token = token;
-  next();
+  return res.status(401).json({ success: false, message: 'Authentication required.' });
 }
 
 // ── Auth Routes ──────────────────────────────────────────────
 
 // Sign Up
-app.post('/api/signup', (req, res) => {
+app.post('/api/auth/signup', (req, res) => {
   const { name, email, phone, password } = req.body;
 
   if (!name || !email || !password) {
@@ -118,9 +132,8 @@ app.post('/api/signup', (req, res) => {
     });
   }
 
-  // Hash password
-  const salt = crypto.randomBytes(16).toString('hex');
-  const passwordHash = hashPassword(password, salt);
+  // Hash password using bcryptjs
+  const passwordHash = bcrypt.hashSync(password, 10);
 
   const user = {
     id: 'user_' + Date.now(),
@@ -128,13 +141,21 @@ app.post('/api/signup', (req, res) => {
     email: email.trim().toLowerCase(),
     phone: (phone || '').trim(),
     passwordHash,
-    salt,
     provider: 'local',
     createdAt: new Date().toISOString()
   };
 
   users.push(user);
   writeUsers(users);
+
+  // Set Express Session
+  req.session.user = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    phone: user.phone,
+    provider: user.provider
+  };
 
   const token = createSession(user.id);
 
@@ -149,7 +170,7 @@ app.post('/api/signup', (req, res) => {
 });
 
 // Login
-app.post('/api/login', (req, res) => {
+app.post('/api/auth/login', (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -160,7 +181,7 @@ app.post('/api/login', (req, res) => {
   }
 
   const users = readUsers();
-  const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.provider === 'local');
+  const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
 
   if (!user) {
     return res.status(401).json({
@@ -169,13 +190,32 @@ app.post('/api/login', (req, res) => {
     });
   }
 
-  const hash = hashPassword(password, user.salt);
-  if (hash !== user.passwordHash) {
+  // Verify password with bcryptjs (with fallback for legacy scrypt hashes)
+  let isMatch = false;
+  if (user.passwordHash) {
+    if (user.passwordHash.startsWith('$2a$') || user.passwordHash.startsWith('$2b$')) {
+      isMatch = bcrypt.compareSync(password, user.passwordHash);
+    } else if (user.salt) {
+      const hash = crypto.scryptSync(password, user.salt, 64).toString('hex');
+      isMatch = (hash === user.passwordHash);
+    }
+  }
+
+  if (!isMatch) {
     return res.status(401).json({
       success: false,
       message: 'Invalid email or password.'
     });
   }
+
+  // Set Express Session
+  req.session.user = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    phone: user.phone,
+    provider: user.provider
+  };
 
   const token = createSession(user.id);
 
@@ -228,7 +268,7 @@ app.post('/api/auth/google', (req, res) => {
   let user = users.find(u => u.email.toLowerCase() === email);
 
   if (user) {
-    // Existing user — update provider info if needed
+    // Existing user
     if (user.provider === 'local') {
       user.provider = provider;
       writeUsers(users);
@@ -241,7 +281,6 @@ app.post('/api/auth/google', (req, res) => {
       email: email.trim(),
       phone: '',
       passwordHash: '',
-      salt: '',
       provider,
       createdAt: new Date().toISOString()
     };
@@ -249,6 +288,15 @@ app.post('/api/auth/google', (req, res) => {
     writeUsers(users);
     console.log(`✓  New OAuth signup: ${user.name} (${user.email}) via ${provider}`);
   }
+
+  // Set Express Session
+  req.session.user = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    phone: user.phone,
+    provider: user.provider
+  };
 
   const token = createSession(user.id);
 
@@ -260,6 +308,13 @@ app.post('/api/auth/google', (req, res) => {
   });
 });
 
+// Logout
+app.post('/api/auth/logout', (req, res) => {
+  if (req.session) {
+    req.session.destroy();
+  }
+  return res.json({ success: true, message: 'Logged out successfully.' });
+});
 
 // Get current user profile
 app.get('/api/me', authenticate, (req, res) => {
@@ -285,6 +340,11 @@ app.put('/api/profile', authenticate, (req, res) => {
 
   writeUsers(users);
 
+  if (req.session && req.session.user) {
+    req.session.user.name = users[idx].name;
+    req.session.user.phone = users[idx].phone;
+  }
+
   console.log(`✓  Profile updated: ${users[idx].name} (${users[idx].email})`);
 
   return res.json({
@@ -300,7 +360,7 @@ app.put('/api/profile', authenticate, (req, res) => {
   });
 });
 
-// ── Registration Route (existing) ────────────────────────────
+// ── Course Application Registration Route ─────────────────────
 
 app.post('/api/register', (req, res) => {
   const { name, email, phone, course } = req.body;
@@ -316,6 +376,7 @@ app.post('/api/register', (req, res) => {
   // Build the record
   const record = {
     id: Date.now(),
+    userId: req.session && req.session.user ? req.session.user.id : null,
     name: name.trim(),
     email: email.trim(),
     phone: phone.trim(),
@@ -323,12 +384,12 @@ app.post('/api/register', (req, res) => {
     registeredAt: new Date().toISOString()
   };
 
-  // Persist
+  // Persist into students.json
   const students = readStudents();
   students.push(record);
   writeStudents(students);
 
-  console.log(`✓  New registration: ${record.name} — ${record.course}`);
+  console.log(`✓  New course application: ${record.name} — ${record.course}`);
 
   return res.status(201).json({
     success: true,
@@ -337,8 +398,8 @@ app.post('/api/register', (req, res) => {
   });
 });
 
-// ── Start ────────────────────────────────────────────────────
+// ── Start Server ─────────────────────────────────────────────
 
 app.listen(PORT, () => {
-  console.log(`\n🎬  Film Institute Registration server running at http://localhost:${PORT}\n`);
+  console.log(`\n🎬  Film Institute Registration server running on port ${PORT} (http://localhost:${PORT})\n`);
 });
