@@ -122,12 +122,18 @@
     if (navDropdownName) navDropdownName.textContent = user.name || '';
     if (navDropdownEmail) navDropdownEmail.textContent = user.email || '';
 
-    // Auto-fill registration form
+    // Auto-fill registration form with active session data
     const nameInput  = document.getElementById('fullName');
     const emailInput = document.getElementById('email');
     const phoneInput = document.getElementById('phone');
-    if (nameInput) nameInput.value = user.name || '';
-    if (emailInput) emailInput.value = user.email || '';
+    if (nameInput) {
+      nameInput.value = user.name || '';
+      nameInput.readOnly = true;
+    }
+    if (emailInput) {
+      emailInput.value = user.email || '';
+      emailInput.readOnly = true;
+    }
     if (phoneInput && !phoneInput.value) phoneInput.value = user.phone || '';
   }
 
