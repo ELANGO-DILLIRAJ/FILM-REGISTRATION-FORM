@@ -539,6 +539,13 @@ body {
   color: #687076;
 }
 
+.form__input[readonly] {
+  background-color: #f5f5f6;
+  color: #44444a;
+  border-color: var(--border);
+  cursor: not-allowed;
+}
+
 .form__input:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-soft);

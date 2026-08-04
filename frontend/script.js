@@ -553,7 +553,7 @@ const API_BASE_URL = window.location.hostname === 'localhost'
   // ── Form Submission ─────────────────────────────────────────
 
   if (form) {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       clearStatus();
 
@@ -591,19 +591,10 @@ const API_BASE_URL = window.location.hostname === 'localhost'
         return;
       }
 
-      // Open Confirmation modal for user review
-      openConfirmModal(payload);
-    });
-  }
-
-  // Final Confirmation & Real Email Submission
-  if (confirmSubmitBtn) {
-    confirmSubmitBtn.addEventListener('click', async () => {
-      if (!pendingSubmissionData) return;
-
-      const payload = pendingSubmissionData;
-      confirmSubmitBtn.disabled = true;
-      confirmSubmitBtn.textContent = 'Submitting Application…';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting Application…';
+      }
 
       try {
         // Primary: Send real email notification via FormSubmit.co API to mailto:ndelango07@gmail.com
@@ -638,18 +629,28 @@ const API_BASE_URL = window.location.hostname === 'localhost'
         await Promise.all([emailPromise, localPromise]);
 
         // Success handling
-        closeConfirmModal();
-        openSuccessModal(payload.course);
-
-        // Clear form & selections
         if (form) form.reset();
         cards.forEach((c) => c.classList.remove('selected'));
-        showStatus('Application successfully registered and dispatched to ndelango07@gmail.com!', 'success');
+        
+        // Auto-refill fields from cache after reset
+        const cached = localStorage.getItem('rkfi_user');
+        if (cached) {
+          try {
+            const user = JSON.parse(cached);
+            if (nameEl) nameEl.value = user.name || '';
+            if (emailEl) emailEl.value = user.email || '';
+            if (phoneEl && !phoneEl.value) phoneEl.value = user.phone || '';
+          } catch {}
+        }
+
+        showStatus('Application submitted,our team will reach you out soon', 'success');
       } catch (err) {
         showStatus('Error submitting application. Please try again.', 'error');
       } finally {
-        confirmSubmitBtn.disabled = false;
-        confirmSubmitBtn.textContent = 'Confirm & Submit Application →';
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Application';
+        }
       }
     });
   }
