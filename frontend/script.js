@@ -133,7 +133,6 @@ const API_BASE_URL = window.location.hostname === 'localhost'
     const phoneInput = document.getElementById('phone');
     if (nameInput) {
       nameInput.value = user.name || '';
-      nameInput.readOnly = true;
     }
     if (emailInput) {
       emailInput.value = user.email || '';

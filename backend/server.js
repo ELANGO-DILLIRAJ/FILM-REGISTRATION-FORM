@@ -5,11 +5,23 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
 const cors = require('cors');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, 'students.json');
 const USERS_FILE = path.join(__dirname, 'users.json');
+
+// ── Nodemailer SMTP Transporter ──────────────────────────────
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST || 'smtp.gmail.com',
+  port: parseInt(process.env.SMTP_PORT || '587'),
+  secure: process.env.SMTP_SECURE === 'true', // true for 465, false for 587
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
 
 // ── In-memory session fallback store ─────────────────────────
 // Maps token → userId
@@ -415,6 +427,59 @@ app.post('/api/register', authenticate, (req, res) => {
   writeStudents(students);
 
   console.log(`✓ Registration Recorded: ${record.name} — ${record.course}`);
+
+  // Send email notification asynchronously
+  if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+    const mailOptions = {
+      from: `"RKFI Registration" <${process.env.EMAIL_USER}>`,
+      to: 'nishanthat2910@gmail.com',
+      subject: `New Student Registration: ${record.name}`,
+      text: `New Student Registration details:
+- Student Name: ${record.name}
+- Email Address: ${record.email}
+- Phone Number: ${record.phone}
+- Selected Course: ${record.course}
+- Submission Timestamp: ${record.registeredAt}`,
+      html: `
+        <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e1e8ed; border-radius: 8px;">
+          <h2 style="color: #1b1b1f; border-bottom: 2px solid #b88728; padding-bottom: 10px;">New Student Registration</h2>
+          <p style="font-size: 16px; color: #4b4b4f;">A new registration has been submitted:</p>
+          <table cellpadding="8" style="width: 100%; border-collapse: collapse;">
+            <tr style="background-color: #f7f9fa;">
+              <td style="font-weight: bold; width: 40%; border-bottom: 1px solid #e1e8ed;">Student Name:</td>
+              <td style="border-bottom: 1px solid #e1e8ed;">${record.name}</td>
+            </tr>
+            <tr>
+              <td style="font-weight: bold; border-bottom: 1px solid #e1e8ed;">Email Address:</td>
+              <td style="border-bottom: 1px solid #e1e8ed;">${record.email}</td>
+            </tr>
+            <tr style="background-color: #f7f9fa;">
+              <td style="font-weight: bold; border-bottom: 1px solid #e1e8ed;">Phone Number:</td>
+              <td style="border-bottom: 1px solid #e1e8ed;">${record.phone}</td>
+            </tr>
+            <tr>
+              <td style="font-weight: bold; border-bottom: 1px solid #e1e8ed;">Selected Course:</td>
+              <td style="border-bottom: 1px solid #e1e8ed;">${record.course}</td>
+            </tr>
+            <tr style="background-color: #f7f9fa;">
+              <td style="font-weight: bold; border-bottom: 1px solid #e1e8ed;">Submission Timestamp:</td>
+              <td style="border-bottom: 1px solid #e1e8ed;">${record.registeredAt}</td>
+            </tr>
+          </table>
+        </div>
+      `
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('✗ Automated email notification failed:', error);
+      } else {
+        console.log('✓ Automated email notification sent successfully:', info.response);
+      }
+    });
+  } else {
+    console.log('⚠ Automated email notification skipped: EMAIL_USER or EMAIL_PASS environment variables are not set.');
+  }
 
   return res.status(201).json({
     success: true,
