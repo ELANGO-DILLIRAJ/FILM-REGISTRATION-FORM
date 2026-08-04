@@ -34,6 +34,22 @@
         <li><a href="about.html" class="navbar__link">About</a></li>
         <li><a href="contact.html" class="navbar__link navbar__link--active">Contact</a></li>
         <li><a href="index.html#registrationForm" class="navbar__link navbar__link--cta">Register</a></li>
+        <li class="navbar__user" id="navUser" style="display:none;">
+          <button class="navbar__avatar-btn" id="navAvatarBtn" aria-label="User menu">
+            <span class="navbar__avatar" id="navAvatar"></span>
+          </button>
+          <div class="navbar__dropdown" id="navDropdown">
+            <div class="navbar__dropdown-header">
+              <span class="navbar__dropdown-name" id="navDropdownName"></span>
+              <span class="navbar__dropdown-email" id="navDropdownEmail"></span>
+            </div>
+            <div class="navbar__dropdown-divider"></div>
+            <button class="navbar__dropdown-item" id="navSignOut">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Sign Out
+            </button>
+          </div>
+        </li>
       </ul>
     </div>
   </nav>
@@ -202,6 +218,35 @@
       }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
 
       revealElements.forEach(el => observer.observe(el));
+    })();
+  </script>
+
+  <!-- Navbar user avatar (non-gated, shows if logged in) -->
+  <script>
+    (function() {
+      var cached = localStorage.getItem('rkfi_user');
+      if (!cached) return;
+      try {
+        var user = JSON.parse(cached);
+        var parts = (user.name || '?').trim().split(/\s+/);
+        var initials = parts.length >= 2 ? (parts[0][0] + parts[parts.length-1][0]).toUpperCase() : parts[0][0].toUpperCase();
+        document.getElementById('navAvatar').textContent = initials;
+        document.getElementById('navUser').style.display = '';
+        document.getElementById('navDropdownName').textContent = user.name || '';
+        document.getElementById('navDropdownEmail').textContent = user.email || '';
+        document.getElementById('navAvatarBtn').addEventListener('click', function(e) {
+          e.stopPropagation();
+          document.getElementById('navDropdown').classList.toggle('open');
+        });
+        document.addEventListener('click', function() {
+          document.getElementById('navDropdown').classList.remove('open');
+        });
+        document.getElementById('navSignOut').addEventListener('click', function() {
+          localStorage.removeItem('rkfi_token');
+          localStorage.removeItem('rkfi_user');
+          window.location.href = 'login.html';
+        });
+      } catch(e) {}
     })();
   </script>
 </body>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connecting to Microsoft...</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #0f0f13;
+      color: #ffffff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .loader {
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      border-top: 3px solid #b88728;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .status {
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.7);
+    }
+  </style>
+</head>
+<body>
+  <div class="loader"></div>
+  <div class="status" id="status">Connecting to Microsoft...</div>
+
+  <script>
+    async function handleCallback() {
+      const statusEl = document.getElementById('status');
+      
+      // Parse token from hash
+      const hash = window.location.hash.substring(1);
+      const params = new URLSearchParams(hash);
+      const accessToken = params.get('access_token');
+      
+      if (!accessToken) {
+        statusEl.textContent = 'Authentication failed. No access token found. Redirecting...';
+        setTimeout(() => window.location.href = 'login.html', 2000);
+        return;
+      }
+
+      statusEl.textContent = 'Fetching profile details from Microsoft...';
+
+      try {
+        // Fetch user details from Microsoft Graph API using the access token
+        const res = await fetch('https://graph.microsoft.com/v1.0/me', {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+          }
+        });
+        
+        if (!res.ok) {
+          throw new Error('Failed to fetch user info from Microsoft');
+        }
+
+        const msUser = await res.json();
+        
+        statusEl.textContent = 'Logging you in locally...';
+
+        // Submit to our backend API to register/login user
+        const loginRes = await fetch('/api/oauth', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: msUser.displayName || msUser.givenName || 'Microsoft User',
+            email: msUser.mail || msUser.userPrincipalName,
+            provider: 'microsoft'
+          })
+        });
+
+        const data = await loginRes.json();
+        if (data.success) {
+          localStorage.setItem('rkfi_token', data.token);
+          localStorage.setItem('rkfi_user', JSON.stringify(data.user));
+          statusEl.textContent = 'Success! Redirecting to dashboard...';
+          setTimeout(() => window.location.href = 'index.html', 500);
+        } else {
+          statusEl.textContent = 'Login failed: ' + data.message;
+          setTimeout(() => window.location.href = 'login.html', 3000);
+        }
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = 'Error logging in with Microsoft. Redirecting...';
+        setTimeout(() => window.location.href = 'login.html', 3000);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', handleCallback);
+  </script>
+</body>
+</html>

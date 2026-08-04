@@ -20,3 +20,10 @@ lerna-debug.log*
 # Operating System files
 .DS_Store
 Thumbs.db
+
+# Local database storage containing user registration and login data
+students.json
+users.json
+*.json.bak
+*.db
+
