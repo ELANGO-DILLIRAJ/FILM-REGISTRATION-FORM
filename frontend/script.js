@@ -3,6 +3,10 @@
    Client-side interactions & Fetch API
    ─────────────────────────────────────────────────────────────── */
 
+const API_BASE_URL = window.location.hostname === 'localhost'
+  ? 'http://localhost:3000'
+  : 'https://rkfi-film-registration.onrender.com';
+
 (function () {
   'use strict';
 
@@ -22,36 +26,36 @@
   }
 
   // ── DOM References ──────────────────────────────────────────
-  const cards      = document.querySelectorAll('.course-card');
-  const dropdown   = document.getElementById('course');
-  const form       = document.getElementById('registrationForm');
-  const statusDiv  = document.getElementById('formStatus');
-  const submitBtn  = document.getElementById('submitBtn');
+  const cards = document.querySelectorAll('.course-card');
+  const dropdown = document.getElementById('course');
+  const form = document.getElementById('registrationForm');
+  const statusDiv = document.getElementById('formStatus');
+  const submitBtn = document.getElementById('submitBtn');
 
   // Profile elements
-  const profileCard    = document.getElementById('profileCard');
-  const profileAvatar  = document.getElementById('profileAvatar');
-  const profileName    = document.getElementById('profileName');
-  const profileEmail   = document.getElementById('profileEmail');
-  const profilePhone   = document.getElementById('profilePhone');
+  const profileCard = document.getElementById('profileCard');
+  const profileAvatar = document.getElementById('profileAvatar');
+  const profileName = document.getElementById('profileName');
+  const profileEmail = document.getElementById('profileEmail');
+  const profilePhone = document.getElementById('profilePhone');
   const profileProvider = document.getElementById('profileProvider');
-  const profileJoined  = document.getElementById('profileJoined');
+  const profileJoined = document.getElementById('profileJoined');
   const profileEditBtn = document.getElementById('profileEditBtn');
-  const profileEdit    = document.getElementById('profileEdit');
+  const profileEdit = document.getElementById('profileEdit');
   const profileDetails = document.getElementById('profileDetails');
-  const editName       = document.getElementById('editName');
-  const editPhone      = document.getElementById('editPhone');
+  const editName = document.getElementById('editName');
+  const editPhone = document.getElementById('editPhone');
   const profileSaveBtn = document.getElementById('profileSaveBtn');
   const profileCancelBtn = document.getElementById('profileCancelBtn');
 
   // Navbar user elements
-  const navUser        = document.getElementById('navUser');
-  const navAvatar      = document.getElementById('navAvatar');
-  const navAvatarBtn   = document.getElementById('navAvatarBtn');
-  const navDropdown    = document.getElementById('navDropdown');
-  const navDropdownName  = document.getElementById('navDropdownName');
+  const navUser = document.getElementById('navUser');
+  const navAvatar = document.getElementById('navAvatar');
+  const navAvatarBtn = document.getElementById('navAvatarBtn');
+  const navDropdown = document.getElementById('navDropdown');
+  const navDropdownName = document.getElementById('navDropdownName');
   const navDropdownEmail = document.getElementById('navDropdownEmail');
-  const navSignOut     = document.getElementById('navSignOut');
+  const navSignOut = document.getElementById('navSignOut');
 
   // ── Helper: Get initials ───────────────────────────────────
   function getInitials(name) {
@@ -75,8 +79,9 @@
 
     // Then fetch fresh from server
     try {
-      const res = await fetch('/api/me', {
-        headers: { 'Authorization': `Bearer ${token}` }
+      const res = await fetch(API_BASE_URL + '/api/me', {
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include'
       });
 
       if (res.status === 401) {
@@ -107,8 +112,8 @@
     if (profilePhone) profilePhone.textContent = user.phone || 'Not set';
     if (profileProvider) {
       const provLabel = user.provider === 'google' ? '● Google'
-                      : user.provider === 'microsoft' ? '● Microsoft'
-                      : '● Local Account';
+        : user.provider === 'microsoft' ? '● Microsoft'
+          : '● Local Account';
       profileProvider.textContent = provLabel;
     }
     if (profileJoined && user.createdAt) {
@@ -123,7 +128,7 @@
     if (navDropdownEmail) navDropdownEmail.textContent = user.email || '';
 
     // Auto-fill registration form with active session data
-    const nameInput  = document.getElementById('fullName');
+    const nameInput = document.getElementById('fullName');
     const emailInput = document.getElementById('email');
     const phoneInput = document.getElementById('phone');
     if (nameInput) {
@@ -185,7 +190,7 @@
 
   if (profileSaveBtn) {
     profileSaveBtn.addEventListener('click', async () => {
-      const newName  = editName.value.trim();
+      const newName = editName.value.trim();
       const newPhone = editPhone.value.trim();
 
       if (!newName) return;
@@ -194,12 +199,13 @@
       profileSaveBtn.textContent = 'Saving…';
 
       try {
-        const res = await fetch('/api/profile', {
+        const res = await fetch(API_BASE_URL + '/api/profile', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
+          credentials: 'include',
           body: JSON.stringify({ name: newName, phone: newPhone })
         });
 
@@ -316,12 +322,12 @@
   };
 
   // ── Modal Elements & Functions ──────────────────────────────
-  const courseModal      = document.getElementById('courseModal');
-  const modalBackdrop    = document.getElementById('modalBackdrop');
-  const modalCloseBtn    = document.getElementById('modalCloseBtn');
+  const courseModal = document.getElementById('courseModal');
+  const modalBackdrop = document.getElementById('modalBackdrop');
+  const modalCloseBtn = document.getElementById('modalCloseBtn');
   const modalCloseFooter = document.getElementById('modalCloseFooter');
-  const modalApplyBtn    = document.getElementById('modalApplyBtn');
-  const modalTabs        = document.querySelectorAll('.modal-tab');
+  const modalApplyBtn = document.getElementById('modalApplyBtn');
+  const modalTabs = document.querySelectorAll('.modal-tab');
   let currentModalCourse = '';
 
   function openCourseModal(courseName) {
@@ -332,25 +338,25 @@
 
     // Populate modal fields
     const elNumber = document.getElementById('modalNumber');
-    const elTitle  = document.getElementById('modalCourseTitle');
-    const elTag    = document.getElementById('modalTagline');
-    const elBadge  = document.getElementById('modalBadge');
-    const elDur    = document.getElementById('modalDuration');
-    const elImg    = document.getElementById('modalImg');
-    const elText   = document.getElementById('modalOverviewText');
+    const elTitle = document.getElementById('modalCourseTitle');
+    const elTag = document.getElementById('modalTagline');
+    const elBadge = document.getElementById('modalBadge');
+    const elDur = document.getElementById('modalDuration');
+    const elImg = document.getElementById('modalImg');
+    const elText = document.getElementById('modalOverviewText');
 
     if (elNumber) elNumber.textContent = data.number;
-    if (elTitle)  elTitle.textContent = courseName;
-    if (elTag)    elTag.textContent = data.tagline;
-    if (elBadge)  elBadge.textContent = data.badge;
-    if (elDur)    elDur.textContent = data.duration;
-    if (elImg) {  elImg.src = data.img; elImg.alt = courseName; }
-    if (elText)   elText.textContent = data.overview;
+    if (elTitle) elTitle.textContent = courseName;
+    if (elTag) elTag.textContent = data.tagline;
+    if (elBadge) elBadge.textContent = data.badge;
+    if (elDur) elDur.textContent = data.duration;
+    if (elImg) { elImg.src = data.img; elImg.alt = courseName; }
+    if (elText) elText.textContent = data.overview;
 
-    const sDur  = document.getElementById('statDuration');
-    const sFmt  = document.getElementById('statFormat');
-    const sElg  = document.getElementById('statEligibility');
-    const sThs  = document.getElementById('statThesis');
+    const sDur = document.getElementById('statDuration');
+    const sFmt = document.getElementById('statFormat');
+    const sElg = document.getElementById('statEligibility');
+    const sThs = document.getElementById('statThesis');
 
     if (sDur) sDur.textContent = data.duration;
     if (sFmt) sFmt.textContent = data.format;
@@ -484,28 +490,28 @@
   }
 
   // ── Application Confirmation & Success Modals Logic ─────────
-  const confirmModal     = document.getElementById('confirmModal');
-  const confirmBackdrop  = document.getElementById('confirmBackdrop');
-  const confirmCloseBtn  = document.getElementById('confirmCloseBtn');
-  const confirmEditBtn   = document.getElementById('confirmEditBtn');
+  const confirmModal = document.getElementById('confirmModal');
+  const confirmBackdrop = document.getElementById('confirmBackdrop');
+  const confirmCloseBtn = document.getElementById('confirmCloseBtn');
+  const confirmEditBtn = document.getElementById('confirmEditBtn');
   const confirmSubmitBtn = document.getElementById('confirmSubmitBtn');
 
-  const successModal     = document.getElementById('successModal');
-  const successBackdrop  = document.getElementById('successBackdrop');
-  const successCloseBtn  = document.getElementById('successCloseBtn');
+  const successModal = document.getElementById('successModal');
+  const successBackdrop = document.getElementById('successBackdrop');
+  const successCloseBtn = document.getElementById('successCloseBtn');
 
   let pendingSubmissionData = null;
 
   function openConfirmModal(data) {
     pendingSubmissionData = data;
-    const elName   = document.getElementById('confirmName');
-    const elEmail  = document.getElementById('confirmEmail');
-    const elPhone  = document.getElementById('confirmPhone');
+    const elName = document.getElementById('confirmName');
+    const elEmail = document.getElementById('confirmEmail');
+    const elPhone = document.getElementById('confirmPhone');
     const elCourse = document.getElementById('confirmCourse');
 
-    if (elName)   elName.textContent = data.name;
-    if (elEmail)  elEmail.textContent = data.email;
-    if (elPhone)  elPhone.textContent = data.phone;
+    if (elName) elName.textContent = data.name;
+    if (elEmail) elEmail.textContent = data.email;
+    if (elPhone) elPhone.textContent = data.phone;
     if (elCourse) elCourse.textContent = data.course;
 
     if (confirmModal) {
@@ -521,10 +527,10 @@
 
   function openSuccessModal(courseName) {
     const refCode = 'RKFI-2026-' + Math.floor(1000 + Math.random() * 9000);
-    const sCourse  = document.getElementById('successCourse');
+    const sCourse = document.getElementById('successCourse');
     const sRefCode = document.getElementById('successRefCode');
 
-    if (sCourse)  sCourse.textContent = courseName;
+    if (sCourse) sCourse.textContent = courseName;
     if (sRefCode) sRefCode.textContent = refCode;
 
     if (successModal) {
@@ -552,15 +558,15 @@
       e.preventDefault();
       clearStatus();
 
-      const nameEl   = document.getElementById('fullName');
-      const emailEl  = document.getElementById('email');
-      const phoneEl  = document.getElementById('phone');
+      const nameEl = document.getElementById('fullName');
+      const emailEl = document.getElementById('email');
+      const phoneEl = document.getElementById('phone');
       const courseEl = document.getElementById('course');
 
       const payload = {
-        name:   nameEl ? nameEl.value.trim() : '',
-        email:  emailEl ? emailEl.value.trim() : '',
-        phone:  phoneEl ? phoneEl.value.trim() : '',
+        name: nameEl ? nameEl.value.trim() : '',
+        email: emailEl ? emailEl.value.trim() : '',
+        phone: phoneEl ? phoneEl.value.trim() : '',
         course: courseEl ? courseEl.value : ''
       };
 
@@ -620,9 +626,13 @@
         }).catch(() => null);
 
         // Secondary: Send to local Node server API if available
-        const localPromise = fetch('/api/register', {
+        const localPromise = fetch(API_BASE_URL + '/api/register', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          credentials: 'include',
           body: JSON.stringify(payload)
         }).catch(() => null);
 

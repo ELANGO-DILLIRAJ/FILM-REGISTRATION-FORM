@@ -4,6 +4,7 @@ const path = require('path');
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
+const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,16 +16,23 @@ const USERS_FILE = path.join(__dirname, 'users.json');
 const tokenSessions = new Map();
 
 // ── Session & Middleware Config ──────────────────────────────
+app.set('trust proxy', 1);
+
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://rkfi-film-registration.netlify.app'],
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'rkfi-secret-key-2026',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false, // Set to true if running strictly behind HTTPS in production
+    sameSite: 'none',
+    secure: true,
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
 }));

@@ -2,6 +2,10 @@
    Auth Page — Login, Sign Up & Official Google Auth
    ─────────────────────────────────────────────────────────────── */
 
+const API_BASE_URL = window.location.hostname === 'localhost' 
+       ? 'http://localhost:3000' 
+       : 'https://rkfi-film-registration.onrender.com';
+
 (function () {
   'use strict';
 
@@ -93,9 +97,10 @@
       signInBtn.querySelector('span').textContent = 'Signing in…';
 
       try {
-        const res = await fetch('/api/login', {
+        const res = await fetch(API_BASE_URL + '/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({ email, password })
         });
         const data = await res.json();
@@ -142,9 +147,10 @@
       signUpBtn.querySelector('span').textContent = 'Creating Account…';
 
       try {
-        const res = await fetch('/api/signup', {
+        const res = await fetch(API_BASE_URL + '/api/signup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({ name, email, phone, password })
         });
         const data = await res.json();
@@ -169,9 +175,10 @@
 // ── Official Google Sign-In Callback ──────────────────────────
 window.handleGoogleCredential = async (response) => {
   try {
-    const res = await fetch('/api/auth/google', {
+    const res = await fetch(API_BASE_URL + '/api/auth/google', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({ credential: response.credential })
     });
 
