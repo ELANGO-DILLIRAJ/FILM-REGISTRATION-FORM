@@ -541,27 +541,49 @@
 
   // ── Form Submission ─────────────────────────────────────────
 
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    clearStatus();
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      clearStatus();
 
-    // Collect values
-    const payload = {
-      name:   form.elements['name'].value.trim(),
-      email:  form.elements['email'].value.trim(),
-      phone:  form.elements['phone'].value.trim(),
-      course: form.elements['course'].value
-    };
+      const nameEl   = document.getElementById('fullName');
+      const emailEl  = document.getElementById('email');
+      const phoneEl  = document.getElementById('phone');
+      const courseEl = document.getElementById('course');
 
-    // Basic client-side guard
-    if (!payload.name || !payload.email || !payload.phone || !payload.course) {
-      showStatus('Please complete all fields before submitting.', 'error');
-      return;
-    }
+      const payload = {
+        name:   nameEl ? nameEl.value.trim() : '',
+        email:  emailEl ? emailEl.value.trim() : '',
+        phone:  phoneEl ? phoneEl.value.trim() : '',
+        course: courseEl ? courseEl.value : ''
+      };
 
-    // Open Confirmation modal for user review
-    openConfirmModal(payload);
-  });
+      // Detailed validation
+      if (!payload.name) {
+        showStatus('Please enter your full name.', 'error');
+        if (nameEl) nameEl.focus();
+        return;
+      }
+      if (!payload.email) {
+        showStatus('Please enter your email address.', 'error');
+        if (emailEl) emailEl.focus();
+        return;
+      }
+      if (!payload.phone) {
+        showStatus('Please enter your phone number.', 'error');
+        if (phoneEl) phoneEl.focus();
+        return;
+      }
+      if (!payload.course) {
+        showStatus('Please select a program from the catalog or dropdown.', 'error');
+        if (courseEl) courseEl.focus();
+        return;
+      }
+
+      // Open Confirmation modal for user review
+      openConfirmModal(payload);
+    });
+  }
 
   // Final Confirmation & Real Email Submission
   if (confirmSubmitBtn) {
@@ -605,7 +627,7 @@
         openSuccessModal(payload.course);
 
         // Clear form & selections
-        form.reset();
+        if (form) form.reset();
         cards.forEach((c) => c.classList.remove('selected'));
         showStatus('Application successfully registered and dispatched to ndelango07@gmail.com!', 'success');
       } catch (err) {

@@ -555,21 +555,23 @@ body {
 
 .form__button {
   font-family: inherit;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--white);
-  background: var(--accent);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: linear-gradient(135deg, #b88728 0%, #9a6b1f 100%);
   border: none;
   border-radius: var(--radius-sm);
   padding: 14px 24px;
   cursor: pointer;
-  transition: opacity var(--transition), transform var(--transition);
-  margin-top: 4px;
+  box-shadow: 0 4px 16px rgba(184, 135, 40, 0.3);
+  transition: all var(--transition);
+  margin-top: 6px;
 }
 
 .form__button:hover {
-  opacity: 0.88;
-  transform: translateY(-1px);
+  opacity: 0.95;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(184, 135, 40, 0.45);
 }
 
 .form__button:active {
@@ -577,9 +579,10 @@ body {
 }
 
 .form__button:disabled {
-  opacity: 0.5;
+  opacity: 0.6;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
 }
 
 /* ── Status Messages ────────────────────────────────────────── */
