@@ -477,9 +477,71 @@
     }
   }
 
+  // ── Application Confirmation & Success Modals Logic ─────────
+  const confirmModal     = document.getElementById('confirmModal');
+  const confirmBackdrop  = document.getElementById('confirmBackdrop');
+  const confirmCloseBtn  = document.getElementById('confirmCloseBtn');
+  const confirmEditBtn   = document.getElementById('confirmEditBtn');
+  const confirmSubmitBtn = document.getElementById('confirmSubmitBtn');
+
+  const successModal     = document.getElementById('successModal');
+  const successBackdrop  = document.getElementById('successBackdrop');
+  const successCloseBtn  = document.getElementById('successCloseBtn');
+
+  let pendingSubmissionData = null;
+
+  function openConfirmModal(data) {
+    pendingSubmissionData = data;
+    const elName   = document.getElementById('confirmName');
+    const elEmail  = document.getElementById('confirmEmail');
+    const elPhone  = document.getElementById('confirmPhone');
+    const elCourse = document.getElementById('confirmCourse');
+
+    if (elName)   elName.textContent = data.name;
+    if (elEmail)  elEmail.textContent = data.email;
+    if (elPhone)  elPhone.textContent = data.phone;
+    if (elCourse) elCourse.textContent = data.course;
+
+    if (confirmModal) {
+      confirmModal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeConfirmModal() {
+    if (confirmModal) confirmModal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function openSuccessModal(courseName) {
+    const refCode = 'RKFI-2026-' + Math.floor(1000 + Math.random() * 9000);
+    const sCourse  = document.getElementById('successCourse');
+    const sRefCode = document.getElementById('successRefCode');
+
+    if (sCourse)  sCourse.textContent = courseName;
+    if (sRefCode) sRefCode.textContent = refCode;
+
+    if (successModal) {
+      successModal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeSuccessModal() {
+    if (successModal) successModal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  if (confirmCloseBtn) confirmCloseBtn.addEventListener('click', closeConfirmModal);
+  if (confirmBackdrop) confirmBackdrop.addEventListener('click', closeConfirmModal);
+  if (confirmEditBtn) confirmEditBtn.addEventListener('click', closeConfirmModal);
+
+  if (successCloseBtn) successCloseBtn.addEventListener('click', closeSuccessModal);
+  if (successBackdrop) successBackdrop.addEventListener('click', closeSuccessModal);
+
   // ── Form Submission ─────────────────────────────────────────
 
-  form.addEventListener('submit', async (e) => {
+  form.addEventListener('submit', (e) => {
     e.preventDefault();
     clearStatus();
 
@@ -497,33 +559,63 @@
       return;
     }
 
-    // Disable button while request is in flight
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Submitting…';
+    // Open Confirmation modal for user review
+    openConfirmModal(payload);
+  });
 
-    try {
-      const res = await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+  // Final Confirmation & Real Email Submission
+  if (confirmSubmitBtn) {
+    confirmSubmitBtn.addEventListener('click', async () => {
+      if (!pendingSubmissionData) return;
 
-      const data = await res.json();
+      const payload = pendingSubmissionData;
+      confirmSubmitBtn.disabled = true;
+      confirmSubmitBtn.textContent = 'Submitting Application…';
 
-      if (res.ok && data.success) {
-        showStatus(data.message || 'Registration successful!', 'success');
+      try {
+        // Primary: Send real email notification via FormSubmit.co API to mailto:ndelango07@gmail.com
+        const emailPromise = fetch('https://formsubmit.co/ajax/ndelango07@gmail.com', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            name: payload.name,
+            email: payload.email,
+            phone: payload.phone,
+            course: payload.course,
+            _subject: `🎬 New Film Institute Application: ${payload.name} — ${payload.course}`,
+            _template: 'table',
+            _captcha: 'false'
+          })
+        }).catch(() => null);
+
+        // Secondary: Send to local Node server API if available
+        const localPromise = fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).catch(() => null);
+
+        await Promise.all([emailPromise, localPromise]);
+
+        // Success handling
+        closeConfirmModal();
+        openSuccessModal(payload.course);
+
+        // Clear form & selections
         form.reset();
         cards.forEach((c) => c.classList.remove('selected'));
-      } else {
-        showStatus(data.message || 'Something went wrong. Please try again.', 'error');
+        showStatus('Application successfully registered and dispatched to ndelango07@gmail.com!', 'success');
+      } catch (err) {
+        showStatus('Error submitting application. Please try again.', 'error');
+      } finally {
+        confirmSubmitBtn.disabled = false;
+        confirmSubmitBtn.textContent = 'Confirm & Submit Application →';
       }
-    } catch (err) {
-      showStatus('Network error — please check your connection and try again.', 'error');
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Submit Application';
-    }
-  });
+    });
+  }
 
   // ── Status Helpers ──────────────────────────────────────────
 

@@ -187,13 +187,13 @@
           <!-- Full Name -->
           <div class="form__group">
             <label for="fullName" class="form__label">Full Name</label>
-            <input type="text" id="fullName" name="name" class="form__input" style="background-color: rgba(255,255,255,0.05); color: rgba(255,255,255,0.5); cursor: not-allowed;" placeholder="e.g. Adira Menon" required readonly />
+            <input type="text" id="fullName" name="name" class="form__input" placeholder="e.g. Adira Menon" required />
           </div>
 
           <!-- Email -->
           <div class="form__group">
             <label for="email" class="form__label">Email Address</label>
-            <input type="email" id="email" name="email" class="form__input" style="background-color: rgba(255,255,255,0.05); color: rgba(255,255,255,0.5); cursor: not-allowed;" placeholder="you@example.com" required readonly />
+            <input type="email" id="email" name="email" class="form__input" placeholder="you@example.com" required />
           </div>
 
           <!-- Phone -->
@@ -332,6 +332,80 @@
         <button type="button" class="modal-btn modal-btn--primary" id="modalApplyBtn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
           Register For This Course
+        </button>
+      </div>
+    </div>
+  <!-- ─── Application Confirmation Modal ───────────────────────────────── -->
+  <div class="course-modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="course-modal__backdrop" id="confirmBackdrop"></div>
+    <div class="course-modal__container" style="max-width: 540px;">
+      <button type="button" class="course-modal__close" id="confirmCloseBtn" aria-label="Close modal">&times;</button>
+      
+      <div class="course-modal__header" style="padding: 24px 24px 16px;">
+        <span class="course-modal__badge" style="background: #b88728; color: #fff;">Confirm Application</span>
+        <h2 class="course-modal__title" id="confirmTitle" style="font-size: 1.4rem; margin-top: 8px;">Review Your Details</h2>
+        <p class="course-modal__tagline">Please verify that your information is correct before submitting your registration.</p>
+      </div>
+
+      <div class="course-modal__body" style="padding: 20px 24px;">
+        <div class="confirm-summary-grid">
+          <div class="confirm-item">
+            <span class="confirm-label">Full Name</span>
+            <strong class="confirm-val" id="confirmName">—</strong>
+          </div>
+          <div class="confirm-item">
+            <span class="confirm-label">Email Address</span>
+            <strong class="confirm-val" id="confirmEmail">—</strong>
+          </div>
+          <div class="confirm-item">
+            <span class="confirm-label">Phone Number</span>
+            <strong class="confirm-val" id="confirmPhone">—</strong>
+          </div>
+          <div class="confirm-item">
+            <span class="confirm-label">Selected Program</span>
+            <strong class="confirm-val" id="confirmCourse" style="color: #f0d4b8;">—</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="course-modal__footer" style="justify-content: space-between;">
+        <button type="button" class="modal-btn modal-btn--secondary" id="confirmEditBtn">
+          ← Edit Details
+        </button>
+        <button type="button" class="modal-btn modal-btn--primary" id="confirmSubmitBtn">
+          Confirm &amp; Submit Application →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Registration Success Modal ──────────────────────────────────── -->
+  <div class="course-modal" id="successModal" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+    <div class="course-modal__backdrop" id="successBackdrop"></div>
+    <div class="course-modal__container" style="max-width: 560px; text-align: center;">
+      
+      <div class="course-modal__body" style="padding: 36px 28px 24px; display: flex; flex-direction: column; align-items: center; gap: 14px;">
+        <div class="success-icon-badge">🎬</div>
+        <span class="course-modal__badge" style="background: #1a7a3a; color: #fff; padding: 4px 14px; font-size: 0.78rem;">Registration Successful</span>
+        <h2 class="course-modal__title" id="successTitle" style="font-size: 1.6rem; color: #ffffff;">Welcome to the RKFI Family!</h2>
+        
+        <p class="modal-text" style="text-align: center; color: rgba(255,255,255,0.85); font-size: 0.92rem; line-height: 1.6; margin-bottom: 4px;">
+          Your application for <strong id="successCourse" style="color: #f0d4b8;">—</strong> has been successfully registered and dispatched to <strong style="color: #d4af37;">ndelango07@gmail.com</strong>.
+        </p>
+
+        <div class="success-ref-box">
+          <span class="success-ref-label">Application Registration Code</span>
+          <strong class="success-ref-code" id="successRefCode">RKFI-2026-8921</strong>
+        </div>
+
+        <p style="font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-top: 2px;">
+          Our admissions committee will review your submission and contact you shortly.
+        </p>
+      </div>
+
+      <div class="course-modal__footer" style="justify-content: center; padding: 16px 24px;">
+        <button type="button" class="modal-btn modal-btn--primary" id="successCloseBtn" style="padding: 12px 32px; font-size: 0.9rem;">
+          Done &amp; Close
         </button>
       </div>
     </div>
